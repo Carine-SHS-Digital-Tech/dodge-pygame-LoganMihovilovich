@@ -7,7 +7,7 @@ import pygame                               # Imports pygame and other libraries
 pygame.init()                               # Pygame is initialised (starts running)
 
 screen = pygame.display.set_mode([700,500]) # Set the width and height of the screen [width,height]
-pygame.display.set_caption("My Game")       # Name your window
+pygame.display.set_caption("Logan Mihovilovich.game")       # Name your window
 done = False                                # Loop until the user clicks the close button.
 clock = pygame.time.Clock()                 # Used to manage how fast the screen updates
 black    = (   0,   0,   0)                 # Define some colors using rgb values.  These can be
@@ -23,7 +23,11 @@ while done == False:
             done = True                     # Flag that we are done so we exit this loop
 
     # Update sprites here
-
+    #python.display.set_caption('Garden')
+    #bg = pygame.image.load(r'C:\Users\logan.mihovilovich\PycharmProjects\dodge-pygame-LoganMihovilovich\OrchardBackground.jpg')
+    # ')
+    #screen.fill((0,0,0))
+    #display_surface.blit(bg, (0, 0))
     pygame.display.flip()                   # Go ahead and update the screen with what we've drawn.
     clock.tick(20)                          # Limit to 20 frames per second
 
