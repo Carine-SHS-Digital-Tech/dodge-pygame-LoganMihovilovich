@@ -2,6 +2,7 @@
 
 import pygame                               # Imports pygame and other libraries
 import random
+import math
 
 # Define Classes (sprites) here
 #Load Apples
@@ -22,16 +23,8 @@ class FallingObject(pygame.sprite.Sprite):
   def moveFallingObjects(self,distance):
       if self.rect.y <= 470:
           self.rect.y = self.rect.y + distance
-  def decayFallingObject(self):
+  def deleteFallingObjects(self,oldscore):
       if self.rect.y > 470:
-        newtime = pygame.time.get_ticks()
-        return newtime
-  def deleteFallingObjects(self,oldscore,oldtime,newtime):
-      if self.rect.y > 470:
-        rateOfDecay = oldtime - newtime
-        if rateOfDecay > 3000:
-          decayed = True
-      if self.rect.y > 470 and decayed == True:
           self.kill()
           newscore = oldscore + 1
           return newscore
@@ -48,6 +41,7 @@ class Character(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = 310
         self.rect.y = 420
+        self.rect.centre()
         self.image.blit(pygame.image.load("Superhero.png"),(0,0))
     def moveCharacter(self, movement):
         if self.rect.x >= 5 and self.rect.x <= 645:
@@ -56,6 +50,17 @@ class Character(pygame.sprite.Sprite):
             self.rect.x = 5
         if self.rect.x > 645:
             self.rect.x = 645
+    def getSpriteAngle(self):
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+        rel_x, rel_y = mouse_x - self.rect.x, mouse_y - self.rect.y
+        angle = math.atan2(rel_y, rel_x)
+    def rotateCharacter(self, angle):
+        orig_rect = self.get_rect()
+        rot_image = pygame.transform.rotate(self.image, angle)
+        rot_rect = orig_rect.copy()
+        rot_rect.centre = rot.image.get_rect().centre
+        rot_image = rot_image.subsurface(rot_rect).copy()
+        return rot_image
 
 pygame.init()                               # Pygame is initialised (starts running)
 
@@ -81,8 +86,8 @@ charactersGroup.add(character)
 
 movement = 0
 score = 0
+angle = 0
 time = pygame.time.get_ticks()
-
 # -------- Main Program Loop -----------
 while done == False:
 
@@ -96,6 +101,10 @@ while done == False:
                 movement = 5
         if event.type == pygame.KEYUP:
             movement = 0
+    while done != True:
+        character.getSpriteAngle()
+        character.rotateCharacter(angle)
+
     # Update sprites here
     if pygame.time.get_ticks() > nextApple:
       nextObject = FallingObject()
@@ -106,11 +115,7 @@ while done == False:
     for eachObject in (allFallingObjects.sprites()):
         eachObject.moveFallingObjects(5)
 
-
-        decay = eachObject.decayFallingObject()
-        if decay == None:
-            decay = 0
-        score,time,decay = eachObject.deleteFallingObjects(score,time,decay)
+        score = eachObject.deleteFallingObjects(score)
 
     character.moveCharacter(movement)
 
